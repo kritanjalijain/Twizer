@@ -43,7 +43,7 @@ def sentiment():
     resp = requests.get('https://api.twitter.com/2/users/by/username/'+user, headers=headers).json()
     print(resp)
     # resp2 = requests.get('https://api.twitter.com/2/users/'+resp['data']['id']+'/tweets', headers=headers).json() 
-    resp2 = requests.get('https://api.twitter.com/2/users/'+resp['data']['id']+'/tweets?tweet.fields=public_metrics,entities,lang,geo,created_at&'+'max_results='+num, headers=headers).json() 
+    resp2 = requests.get('https://api.twitter.com/2/users/'+resp['data']['id']+'/tweets?tweet.fields=public_metrics,entities,lang,geo,created_at,source&'+'max_results='+num, headers=headers).json() 
 
     from tensorflow.keras.models import load_model
     from tensorflow.keras.preprocessing.text import Tokenizer
@@ -130,7 +130,7 @@ def user():
         'Tweets liked': user_followers.favourites_count
     }
 
-    return jsonify({ "Result": final_res })
+    return jsonify({ "result": final_res })
     # return jsonify({ "result": len(resp2['data']) })
 
 
@@ -148,11 +148,21 @@ def user():
 
 @app.route('/api/hashtag', methods = ['POST'])
 def tags():
-    tag = request.json['hashtag']
+    tagg = request.json['hashtag']
     num = request.json['num']
-    tag = '#' + tag
+    tag = '#' + tagg
+    # text = request.json['text']
+    headers = CaseInsensitiveDict()
+    # headers["Accept"] = "application/json"
+    headers["Authorization"] = "Bearer "+token
+    #url = "https://api.twitter.com/2/tweets/search/recent?query=nyc&tweet.fields=author_id,created_at,entities,geo,in_reply_to_user_id,lang,possibly_sensitive,referenced_tweets,source"
 
+    #payload={}
+    #headers = {}
+    resp3 = requests.get("https://api.twitter.com/2/tweets/search/recent?query="+ tagg + "&tweet.fields=author_id,created_at,entities,geo,in_reply_to_user_id,lang,possibly_sensitive,referenced_tweets,source&user.fields=username,public_metrics,withheld,verified&"+'max_results='+num, headers=headers).json() 
+    #response = requests.request("GET", url, headers=headers, data=payload)
 
+    #print(resp3)
 
     from tensorflow.keras.models import load_model
     from tensorflow.keras.preprocessing.text import Tokenizer
@@ -175,7 +185,7 @@ def tags():
         
         sentiment_classes = ['Negative', 'Neutral', 'Positive']
         max_len=50
-        print(text)
+        #print(text)
         # Transforms text to a sequence of integers using a tokenizer object
        
         xt = tokenizer.texts_to_sequences(text)
@@ -191,24 +201,34 @@ def tags():
         k= sentiment_classes[yt[0]]
         #print(k)
         return k
+
+    final_dict = {}
+    res_array = []
+
+    for i in resp3['data']:
+        tweet = i['text']
+        analysis = predict_class([tweet])
+        i['sentiment']=analysis
+
+    return jsonify({ "result": resp3['data'] })
+
+    # tweets = []
+    # for tweet in tw.Cursor(api.search_tweets, q=tag).items(int(num)):
+    #     tweets.append(tweet.text)
+
+    # analysis = {}
     
-    tweets = []
-    for tweet in tw.Cursor(api.search_tweets, q=tag).items(int(num)):
-        tweets.append(tweet.text)
+    # final_res = []
 
-    analysis = {}
-    
-    final_res = []
-
-    for tweet in tweets:
-        analysis['text'] = tweet
-        #print(tweet)
-        analysis['sentiment'] = predict_class([tweet])
-        final_res.append(analysis)
-        analysis = {}
+    # for tweet in tweets:
+    #     analysis['text'] = tweet
+    #     #print(tweet)
+    #     analysis['sentiment'] = predict_class([tweet])
+    #     final_res.append(analysis)
+    #     analysis = {}
 
 
-    return jsonify({ 'result': final_res })
+    # return jsonify({ 'result': final_res })
 
 
 

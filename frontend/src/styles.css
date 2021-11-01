@@ -1,0 +1,19 @@
+html {
+  /* font-family: system-ui, sans-serif; */
+  font-family: "Poppins", sans-serif;
+  font-size: 1.25rem;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+p {
+  margin: 0px;
+}

@@ -6,9 +6,12 @@ import json
 import tweepy as tw
 from os import environ
 from dotenv import load_dotenv
-
-
+from flask_cors import CORS
+import re
+from collections import Counter
 app = Flask(__name__)
+CORS(app)
+
 load_dotenv()
 token = os.getenv('BEARER_TOKEN')
 
@@ -41,9 +44,33 @@ def sentiment():
     headers["Authorization"] = "Bearer "+token
 
     resp = requests.get('https://api.twitter.com/2/users/by/username/'+user, headers=headers).json()
-    print(resp)
+    #print(resp)
     # resp2 = requests.get('https://api.twitter.com/2/users/'+resp['data']['id']+'/tweets', headers=headers).json() 
     resp2 = requests.get('https://api.twitter.com/2/users/'+resp['data']['id']+'/tweets?tweet.fields=public_metrics,entities,lang,geo,created_at,source&'+'max_results='+num, headers=headers).json() 
+
+    user_followers = api.get_user(user_id=resp['data']['id'])
+
+    #with open('stopword.txt', 'r') as stopwords_file:
+    #    STOPWORDS = {line.strip() for line in stopwords_file}
+    
+    # def wordcloud(text):
+    #     '''convert text to lowercase, remove regex, split words, remove stopwords, count frequency of each word'''
+    #     print(text)
+    #     #str1 = ' '
+    #     #text=str1.join(text)
+    #     tokens = []
+    #     text_lower = text.lower()
+    #     text = re.sub(r"(?:\@|https?\://)\S+", '', text_lower)
+    #     tokens = text.split()
+    #     print(tokens)
+    #     if 3 < len(token) and token not in STOPWORDS:
+    #         tokens.append(token)
+    #     wordcloud_data = Counter(tokens)
+    #     return type(wordcloud_data)
+    
+
+        
+
 
     from tensorflow.keras.models import load_model
     from tensorflow.keras.preprocessing.text import Tokenizer
@@ -60,6 +87,7 @@ def sentiment():
 
     with open('./lstm/preprocess.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
+
 
 
     def predict_class(text):
@@ -83,44 +111,6 @@ def sentiment():
         print(k)
         return k
 
-    final_dict = {}
-    res_array = []
-
-    for i in resp2['data']:
-        tweet = i['text']
-        analysis = predict_class([tweet])
-        i['sentiment']=analysis
-
-    return jsonify({ "result": resp2['data'] })
-
-
-
-
-
-
-
-
-
-
-@app.route('/api/user', methods=['POST'])
-def user():
-
-    user = request.json['user']
-    # num = request.json['num']
-
-    # token = ''
-
-    # text = request.json['text']
-    headers = CaseInsensitiveDict()
-    # headers["Accept"] = "application/json"
-    headers["Authorization"] = "Bearer "+token
-
-    resp = requests.get('https://api.twitter.com/2/users/by/username/'+user, headers=headers).json()
-
-    print(resp)
-
-
-    user_followers = api.get_user(user_id=resp['data']['id'])
 
     final_res = {
         'user':         user,
@@ -130,39 +120,33 @@ def user():
         'Tweets liked': user_followers.favourites_count
     }
 
-    return jsonify({ "result": final_res })
-    # return jsonify({ "result": len(resp2['data']) })
+    #return jsonify({ "result": final_res })
 
+    for i in resp2['data']:
+        tweet = i['text']
+        analysis = predict_class([tweet])
+        #wordclouddata = wordcloud(tweet)
+        #i['wordcloud_data']=wordclouddata
+        i['sentiment']=analysis
 
-
-
-
-
-
-
-
-
-
-
+    return jsonify({ "result": resp2['data'] , "profile": final_res})
 
 
 @app.route('/api/hashtag', methods = ['POST'])
 def tags():
-    tagg = request.json['hashtag']
+    tagg = request.json['user']
     num = request.json['num']
     tag = '#' + tagg
     # text = request.json['text']
     headers = CaseInsensitiveDict()
     # headers["Accept"] = "application/json"
     headers["Authorization"] = "Bearer "+token
-    #url = "https://api.twitter.com/2/tweets/search/recent?query=nyc&tweet.fields=author_id,created_at,entities,geo,in_reply_to_user_id,lang,possibly_sensitive,referenced_tweets,source"
+   
 
-    #payload={}
-    #headers = {}
-    resp3 = requests.get("https://api.twitter.com/2/tweets/search/recent?query="+ tagg + "&tweet.fields=author_id,created_at,entities,geo,in_reply_to_user_id,lang,possibly_sensitive,referenced_tweets,source&user.fields=username,public_metrics,withheld,verified&"+'max_results='+num, headers=headers).json() 
+    resp3 = requests.get("https://api.twitter.com/2/tweets/search/recent?query="+ tagg + "&start_time=2021-10-26T22:41:53.000Z&end_time=2021-10-28T22:41:53.000Z&tweet.fields=author_id,created_at,entities,referenced_tweets,reply_settings,source,text,withheld,public_metrics,lang&expansions=author_id,geo.place_id,in_reply_to_user_id&place.fields=contained_within,country,country_code,full_name,geo,id,name,place_type&user.fields=id,name,username&"+'max_results='+num, headers=headers).json() 
     #response = requests.request("GET", url, headers=headers, data=payload)
 
-    #print(resp3)
+    print(resp3)
 
     from tensorflow.keras.models import load_model
     from tensorflow.keras.preprocessing.text import Tokenizer
@@ -210,7 +194,9 @@ def tags():
         analysis = predict_class([tweet])
         i['sentiment']=analysis
 
-    return jsonify({ "result": resp3['data'] })
+
+
+    return jsonify({ "result": resp3['data'] , "username": resp3['includes']})
 
     # tweets = []
     # for tweet in tw.Cursor(api.search_tweets, q=tag).items(int(num)):

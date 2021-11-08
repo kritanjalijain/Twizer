@@ -15,6 +15,7 @@ tWizer helps presenting all the unstructured Twitter data into a finely tailored
 * Tensorflow
 * Flask
 
+![](https://github.com/kritanjalijain/Twizer/blob/main/images/twizer_arch.png)
 
 ##### Fig 1 - Flow of the system
 
@@ -23,10 +24,14 @@ tWizer helps presenting all the unstructured Twitter data into a finely tailored
    * user name 
    * hashtag
 
+![](https://github.com/kritanjalijain/Twizer/blob/main/images/landing.png)
+
 ##### Fig 2 - Landing page
 
 
 * The tweets after being retrieved in the backend in the metadata form is fed into the corresponding fields in the frontend producing a powerful visualization dashboard
+
+![](https://github.com/kritanjalijain/Twizer/blob/main/images/profilemetrics.png)
 
 ##### Fig 3 - Username profile metrics and sentiment analysis
 
@@ -34,21 +39,28 @@ tWizer helps presenting all the unstructured Twitter data into a finely tailored
   * the first section shows the user’s profile metrics like the count of the user’s friends, followers, number of tweets and number of tweets liked by the user
   * the second section includes classifying the sentiments of the tweets into three categories namely – positive, negative and neutral in the form of a pie chart (the model training/testing details can be found [here](https://github.com/kritanjalijain/Twitter_Sentiment_Analysis))
 
+<img src="https://github.com/kritanjalijain/Twizer/blob/main/images/mostlike.png" width=500 align=left>
+<img src="https://github.com/kritanjalijain/Twizer/blob/main/images/mostquoted.png" width=500 align=center>
+
 ##### Fig 4 - Top replied and quoted tweets, top liked and retweeted tweets
 
 * The impact of the user’s tweet is analyzed in terms of the most replied, retweeted, quoted and liked tweets the user ever tweeted. The app embeds the tweets directly from twitter and provides functionality of seeing not just the text but the images and play in-picture video attached to the tweet along with the option of going to the tweet directly in case the user wishes to interact with it. 
+
+![](https://github.com/kritanjalijain/Twizer/blob/main/images/table.png)
 
 ##### Fig 5 - Table of user’s tweets along with their impact metrics sorted via like count
 
 * The app next analyses all the tweets fetched and visualizes them into a pagniated tabular format. The tweets can be sorted in increasing order or decreasing order of one of the four
 metrics or all of them together.
 
+![](https://github.com/kritanjalijain/Twizer/blob/main/images/lang.png)
+
 ##### Fig 6 - Language-wise distribution of tweets
 
 * Finally it consists of a distribution graph to represent variety of languages the people have tweeted in for that particular hashtag or username
 
 
-
+![]()
 
 ##### Fig 7 - Abstraction layers of the web-application 
 

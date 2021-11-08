@@ -9,11 +9,6 @@ tWizer helps presenting all the unstructured Twitter data into a finely tailored
 
 ## Working
 
-### Technologies Used
-* Languages - Python, Javascript
-* React.js - Material UI, ReaViz, React Twitter Embed
-* Tensorflow
-* Flask
 
 ![](https://github.com/kritanjalijain/Twizer/blob/main/images/twizer_arch.png)
 
@@ -59,22 +54,49 @@ metrics or all of them together.
 
 * Finally it consists of a distribution graph to represent variety of languages the people have tweeted in for that particular hashtag or username
 
-
-![]()
+<img src="https://github.com/kritanjalijain/Twizer/blob/main/images/layers.png" width=500 align=center>
 
 ##### Fig 7 - Abstraction layers of the web-application 
 
 On encountering an input query made by the user via the frontend built in React.js. The flask server in turn, requests data from twitter via Twitter’s API. The API sends data response to the backend which it processes and analyzes via sentiment analysis and other metrics which it sends as a json response to the frontend again. Powerful React libraries are used for visualization and graphical presentation of the data which are presented to the user’s dashboard.
 
+## Built With
+* Languages - Python, Javascript
+* React.js - Material UI, ReaViz, React Twitter Embed
+* Tensorflow
+* Flask
+
 
 ## Setup and Installation
-* Clone the repo via `git clone`
-* Install all dependecies via `requirements.txt`
+* Clone the repository 
+``` 
+git clone https://github.com/kritanjalijain/Twizer.git
+```
+* Change to working directory
+```
+cd Twizer
+```
+* Install all dependencies (preferrably in a virtual env)
+```
+pip install -r requirements.txt
+```
 * Add your private Twitter API keys (see [.env_sample](https://github.com/kritanjalijain/Twizer/blob/main/.env_sample) for details) (To get your own API keys you will need a Twitter Developer's Account. See documentation for further details [Get started with the Twitter developer platform](https://developer.twitter.com/en/docs/getting-started)
-* Run the backend flask server in a terminal via `python app.py`
-* In a new terminal (without closing the backend flask server), navigate to the React frontend via ` cd frontend` 
-* Run `npm install` or `npm i` to install the dependencies in the local `node_modules` folder
-* Run the node script via `npm start`
+* Run the backend flask server in a terminal 
+```
+python app.py
+```
+* In a new terminal (without closing the backend flask server), navigate to the React frontend 
+```
+cd frontend
+```
+* Install the dependencies in the local `node_modules` folder
+``` 
+npm i
+```
+* Run the node script 
+```
+npm start
+```
 * Open the local host port the server is using in a browser by clicking on the link displayed in the terminal in case it does not automatically pop-up
 
 
